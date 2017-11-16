@@ -12,7 +12,9 @@ void error(char *msg)
     exit(0);
 }
 
-int main(int argc, char *argv[])
+
+
+int command(int argc, char *argv[])
 {
     int sockfd, portno, n;
 
@@ -20,7 +22,8 @@ int main(int argc, char *argv[])
     struct hostent *server;
 
     char buffer[256];
-    if (argc < 3) {
+    if (argc < 3)
+    {
        fprintf(stderr,"usage %s hostname port\n", argv[0]);
        exit(0);
     }
@@ -29,7 +32,8 @@ int main(int argc, char *argv[])
     if (sockfd < 0)
         error("ERROR opening socket");
     server = gethostbyname(argv[1]);
-    if (server == NULL) {
+    if (server == NULL)
+    {
         fprintf(stderr,"ERROR, no such host\n");
         exit(0);
     }
