@@ -260,7 +260,7 @@ int checkCadran(int x1, int y1, int x2, int y2){
 }
 
 //faces center
-void center_face(int x1, int y1, int x2, int y2){
+/*void center_face(int x1, int y1, int x2, int y2){
 	int center1 = 320;
 	int center2 = 240;
 
@@ -269,7 +269,7 @@ void center_face(int x1, int y1, int x2, int y2){
 	while(diff1)
 	command('f');
 	sleep()
-}
+}*/
 
 int main(int argc, char* argv[])
 {
