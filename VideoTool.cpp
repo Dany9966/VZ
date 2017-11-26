@@ -1,4 +1,4 @@
- #include <sstream>
+#include <sstream>
 #include <string>
 #include <iostream>
 //#include <opencv2\highgui.h>
@@ -199,7 +199,66 @@ void command(char comm){
 		int n = send(sockfd, buffer, strlen(buffer), 0);
 		if (n < 0)
          error("ERROR writing to socket");
+		else {
+			if(comm != 's') usleep(1000);
+		}
 }
+
+int C1(int x1, int y1, int x2, int y2){
+	if(x1 >= x2 && y1 <= y2)
+		return 1;
+	return 0;
+}
+
+int C2(int x1, int y1, int x2, int y2){
+	if(x1 >= x2 && y1 >= y2)
+		return 1;
+	return 0;
+}
+
+int C3(int x1, int y1, int x2, int y2){
+	if(x1 <= x2 && y1 >= y2)
+		return 1;
+	return 0;
+}
+
+int C4(int x1, int y1, int x2, int y2){
+	if(x1 <= x2 && y1 <= y2)
+		return 1;
+	return 0;
+}
+
+void battle_C1C3(){
+	command('f');
+	command('l');
+	command('f');
+	command('r');
+	command('s');
+	
+}
+
+void battle_C2C4(){
+	command('f');
+	command('r');
+	command('f');
+	command('l');
+	command('s');
+}
+
+int checkCadran(int x1, int y1, int x2, int y2){
+	if(C1(x1,y1,x2,y2))
+		return 1;
+	
+	if(C2(x1,y1,x2,y2))
+		return 2;
+
+	if(C3(x1,y1,x2,y2))
+		return 3;
+
+	if(C4(x1,y1,x2,y2))
+		return 4;
+}
+
 //faces center
 void center_face(int x1, int y1, int x2, int y2){
 	int center1 = 320;
@@ -273,7 +332,7 @@ int main(int argc, char* argv[])
 
 
 
-
+	int count = 0;
 
 
 	while (1) {
@@ -308,9 +367,38 @@ int main(int argc, char* argv[])
 		if (trackObjects)
 			trackFilteredObject(x2, y2, threshold, cameraFeed);
 
-		//comenzi
-		command('f');
-		if()
+		//INTOARCERE LA CENTRU
+		//Battle
+		int c = checkCadran();
+		if(c == 1 || c == 3){
+			if(count != 3){
+				battle_C1C3(); 
+				count++;
+			}
+			else {//recenter
+				command('l');
+				usleep(1000);
+				command('s');
+				count = 0;
+			}
+		}
+
+		if(c == 2 || c == 4){
+			if(count != 3){
+				battle_C2C4(); 
+				count++;
+			}
+			else {//recenter
+				command('l');
+				usleep(1000);
+				command('s');
+				count = 0;
+			}
+		}
+
+
+
+
 
 		//show frames
 		imshow(windowName2, threshold);
