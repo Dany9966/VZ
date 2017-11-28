@@ -12,8 +12,9 @@
 #include <netdb.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
-#define PORTNO 8080
+#define PORTNO 20236
 #define SERVER_NAME "name"
 
 using namespace std;
@@ -26,7 +27,7 @@ int S_MIN = 0;
 int S_MAX = 256;
 int V_MIN = 0;
 int V_MAX = 256;
-char buffer[2];
+char *buffer;
 //default capture width and height
 const int FRAME_WIDTH = 640;
 const int FRAME_HEIGHT = 480;
@@ -41,13 +42,7 @@ const std::string windowName1 = "HSV Image";
 const std::string windowName2 = "Thresholded Image";
 const std::string windowName3 = "After Morphological Operations";
 const std::string trackbarWindowName = "Trackbars";
-
-void error(char *msg)
-{
-    perror(msg);
-    exit(0);
-}
-
+int sockfd;
 
 void on_mouse(int e, int x, int y, int d, void *ptr)
 {
@@ -193,10 +188,9 @@ void trackFilteredObject(int &x, int &y, Mat threshold, Mat &cameraFeed) {
 }
 
 void command(char comm){
-		buffer[0] = comm;
-		buffer[1] = '\0';
-		bzero(buffer,2);
-		int n = send(sockfd, buffer, strlen(buffer), 0);
+		buffer = &comm;
+		//bzero(buffer,2);
+		int n = send(sockfd, buffer, 1, 0);
 		if (n < 0)
          error("ERROR writing to socket");
 		else {
@@ -301,7 +295,7 @@ int main(int argc, char* argv[])
 	//all of our operations will be performed within this loop
 
 	//conectare
-	int sockfd, portno, n;
+	int portno, n;
 
 
 	struct sockaddr_in serv_addr;
@@ -367,9 +361,8 @@ int main(int argc, char* argv[])
 		if (trackObjects)
 			trackFilteredObject(x2, y2, threshold, cameraFeed);
 
-		//INTOARCERE LA CENTRU
 		//Battle
-		int c = checkCadran();
+		int c = checkCadran(x1,y1,x2,y2);
 		if(c == 1 || c == 3){
 			if(count != 3){
 				battle_C1C3(); 
