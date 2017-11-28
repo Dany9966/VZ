@@ -14,8 +14,8 @@
 #include <string.h>
 #include <unistd.h>
 
-#define PORTNO 20236
-#define SERVER_NAME "name"
+#define PORTNO 20326
+#define SERVER_NAME "193.226.12.217"
 
 using namespace std;
 using namespace cv;
