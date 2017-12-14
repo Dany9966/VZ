@@ -14,7 +14,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#define PORTNO 20326
+#define PORTNO 20236
 #define SERVER_NAME "193.226.12.217"
 
 using namespace std;
@@ -187,18 +187,25 @@ void trackFilteredObject(int &x, int &y, Mat threshold, Mat &cameraFeed) {
 	}
 }
 
-void command(char comm){
+void command(char comm)
+{
 		buffer = &comm;
 		//bzero(buffer,2);
 		int n = send(sockfd, buffer, 1, 0);
 		if (n < 0)
-         error("ERROR writing to socket");
-		else {
-			if(comm != 's') usleep(1000);
+		{
+        perror("ERROR writing to socket");
+				exit(1);
+		}
+		else
+		{
+			if(comm != 's')
+				usleep(1000);
 		}
 }
 
-int C1(int x1, int y1, int x2, int y2){
+int C1(int x1, int y1, int x2, int y2)
+{
 	if(x1 >= x2 && y1 <= y2)
 		return 1;
 	return 0;
@@ -228,7 +235,7 @@ void battle_C1C3(){
 	command('f');
 	command('r');
 	command('s');
-	
+
 }
 
 void battle_C2C4(){
@@ -242,7 +249,7 @@ void battle_C2C4(){
 int checkCadran(int x1, int y1, int x2, int y2){
 	if(C1(x1,y1,x2,y2))
 		return 1;
-	
+
 	if(C2(x1,y1,x2,y2))
 		return 2;
 
@@ -303,9 +310,10 @@ int main(int argc, char* argv[])
 
 	portno = PORTNO;
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (sockfd < 0)
-			error("ERROR opening socket");
-
+	if (sockfd < 0){
+			perror("ERROR opening socket");
+			exit(1);
+}
 	server = gethostbyname(SERVER_NAME);
 	if (server == NULL)
 	{
@@ -321,9 +329,10 @@ int main(int argc, char* argv[])
 
 	serv_addr.sin_port = htons(portno);
 
-	if (connect(sockfd,(struct sockaddr *)&serv_addr,sizeof(serv_addr)) < 0)
-			error("ERROR connecting");
-
+	if (connect(sockfd,(struct sockaddr *)&serv_addr,sizeof(serv_addr)) < 0){
+			perror("ERROR connecting");
+			exit(1);
+}
 
 
 	int count = 0;
@@ -339,7 +348,7 @@ int main(int argc, char* argv[])
 		}
 		//convert frame from BGR to HSV colorspace
 		cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
-		
+
 		//filter HSV image between values and store filtered image to
 		//threshold matrix
 		inRange(HSV, Scalar(174, S_MIN, V_MIN), Scalar(H_MAX, S_MAX, V_MAX), threshold);
@@ -366,7 +375,7 @@ int main(int argc, char* argv[])
 		int c = checkCadran(x1,y1,x2,y2);
 		if(c == 1 || c == 3){
 			if(count != 3){
-				battle_C1C3(); 
+				battle_C1C3();
 				count++;
 			}
 			else {//recenter
@@ -379,7 +388,7 @@ int main(int argc, char* argv[])
 
 		if(c == 2 || c == 4){
 			if(count != 3){
-				battle_C2C4(); 
+				battle_C2C4();
 				count++;
 			}
 			else {//recenter
@@ -389,6 +398,7 @@ int main(int argc, char* argv[])
 				count = 0;
 			}
 		}
+		//printf("Am ajuns aici\n");
 
 
 
